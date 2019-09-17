@@ -1,9 +1,27 @@
 close all
+
+% Optimization problem:
+
+% max beta * (cons^(1-sigma))/(1-sigma))
+% s.t. k'+cons = k^alpha + (1-delta)k
+%      k_0 given
+
+% Y = AK^alpha
+% A = {Ah, Al}
+
+
+% transition matrix pi  = [pi^hh, 1-pi^ll, 1-pi^hh, pi^ll)
+pi_hh = 0.977 
+pi_ll = 0.926
+trans = [pi_hh 1-pi_hh; 1-pi_ll pi_ll]
+
+
 %%%% Set up parameters
 alpha = 0.35;
 beta = 0.99;
 delta = 0.025;
 sigma = 2;
+interest = 0.04;
 
 %%%% Set up discretized state space
 k_min = 0;
