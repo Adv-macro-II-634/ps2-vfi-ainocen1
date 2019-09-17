@@ -2,12 +2,22 @@ close all
 
 % Optimization problem:
 
-% max beta * (cons^(1-sigma))/(1-sigma))
-% s.t. k'+cons = k^alpha + (1-delta)k
+% max beta * (c^(1-sigma))/(1-sigma))
+% s.t. k'+ c = k^alpha + (1-delta)k
 %      k_0 given
 
 % Y = AK^alpha
 % A = {Ah, Al}
+
+% c = k^alpha + (1-delta)k - k'
+% y = f(k) = c + i
+% c = f(k) = Ak^alpha= k^alpha + (1-delta)k - k'
+% c = Ak^alpha + (1-delta)k - k'
+
+% Dynamic programming problem:
+% state = c, k
+% control = k'
+% V (k) = ((Ak^alpha + (1-delta)k - k')^(1-sigma))/(1-sigma) + beta V(k')
 
 
 % transition matrix pi  = [pi^hh, 1-pi^ll, 1-pi^hh, pi^ll)
@@ -22,6 +32,8 @@ beta = 0.99;
 delta = 0.025;
 sigma = 2;
 interest = 0.04;
+a_h = 1.1
+a_l = 0.678
 
 %%%% Set up discretized state space
 k_min = 0;
