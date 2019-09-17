@@ -14,10 +14,10 @@ close all
 % c = f(k) = Ak^alpha= k^alpha + (1-delta)k - k'
 % c = Ak^alpha + (1-delta)k - k'
 
-% Dynamic programming problem:
-% state = c, k
+% state = k
 % control = k'
-% V (k) = ((Ak^alpha + (1-delta)k - k')^(1-sigma))/(1-sigma) + beta V(k')
+% Dynamic programming problem:
+% V (k) = ((Ak^alpha + (1-delta)k - k')^(1-sigma))/(1-sigma) + beta V(k',E[A'])
 
 
 % transition matrix pi  = [pi^hh, 1-pi^ll, 1-pi^hh, pi^ll)
@@ -48,10 +48,21 @@ k_mat = repmat(k', [1 num_k]); % this will be useful in a bit
 % 1st dim(rows): k today, 2nd dim (cols): k' chosen for tomorrow
 cons = k_mat .^ alpha + (1 - delta) * k_mat - k_mat'; 
 
+c1 = a_h*k_mat .^ alpha + (1 - delta) * k_mat - k_mat'; 
+c2 = a_l*k_mat .^ alpha + (1 - delta) * k_mat - k_mat'; 
+
 ret = cons .^ (1 - sigma) / (1 - sigma); % return function
+
+ret1 = c1.^ (1 - sigma) / (1 - sigma);
+ret2 = c2.^ (1 - sigma) / (1 - sigma);
+
+
 % negative consumption is not possible -> make it irrelevant by assigning
 % it very large negative utility
 ret(cons < 0) = -Inf;
+
+ret1(cons1 < 0) = -Inf;
+ret2(cons2 < 0) = -Inf;
 
 %%%% Iteration
 dis = 1; tol = 1e-06; % tolerance for stopping 
@@ -59,6 +70,9 @@ v_guess = zeros(1, num_k);
 while dis > tol
     % compute the utility value for all possible combinations of k and k':
     value_mat = ret + beta * repmat(v_guess, [num_k 1]);
+    
+    value_mat1 = ret1 + beta * repmat(v_guess, [num_k 1]);
+    value_mat2 = ret2 + beta * repmat(v_guess, [num_k 1]);
     
     % find the optimal k' for every k:
     [vfn, pol_indx] = max(value_mat, [], 2);
